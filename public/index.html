@@ -1,318 +1,236 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2575.7">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rue Tracker</title>
+
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin:0; background:#fafafa; color:#222; }
+    header { background:#ff7f50; color:#fff; padding:16px; text-align:center; font-weight:700; }
+    nav { display:flex; background:#eee; }
+    nav button { flex:1; padding:12px; border:0; background:#eee; cursor:pointer; font-size:16px; }
+    nav button.active { background:#fff; border-bottom:3px solid #ff7f50; }
+    main { padding:16px; }
+    .log-entry,.schedule-item,.command-row { background:#fff; margin:8px 0; padding:12px; border-radius:8px; box-shadow:0 2px 4px rgba(0,0,0,.05); display:flex; justify-content:space-between; align-items:center; gap:8px; }
+    .btn { background:#ff7f50; color:#fff; border:0; border-radius:6px; padding:8px 12px; cursor:pointer; }
+    .btn.small { padding:6px 10px; font-size:13px; }
+    .btn.delete { background:#d9534f; }
+    .green { background:#d4edda !important; }
+    .row { display:flex; gap:8px; flex-wrap:wrap; }
+    textarea, input, select { font:inherit; }
   </style>
+
+  <!-- React / Supabase UMD + Babel (so JSX works without a build) -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
 <body>
-<p class="p1">&lt;!DOCTYPE html&gt;</p>
-<p class="p1">&lt;html lang="en"&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1">&lt;meta charset="UTF-8" /&gt;</p>
-<p class="p1">&lt;meta name="viewport" content="width=device-width, initial-scale=1.0" /&gt;</p>
-<p class="p1">&lt;title&gt;Rue Tracker&lt;/title&gt;</p>
-<p class="p1">&lt;style&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>body {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-family: sans-serif;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>margin: 0;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>padding: 0;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background: #fafafa;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>color: #222;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>header {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background: #ff7f50;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>color: white;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>padding: 1em;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>text-align: center;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-size: 1.4em;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-weight: bold;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>nav {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>display: flex;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background: #eee;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>nav button {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>flex: 1;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>padding: 1em;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>border: none;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background: #eee;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>cursor: pointer;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-size: 1em;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>nav button.active {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background: white;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>border-bottom: 3px solid #ff7f50;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>main {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>padding: 1em;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.log-entry, .schedule-item, .command-row {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background: white;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>margin: 0.5em 0;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>padding: 0.8em;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>border-radius: 6px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>box-shadow: 0 2px 4px rgba(0,0,0,0.05);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.btn {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background: #ff7f50;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>color: white;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>padding: 0.5em 1em;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>border: none;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>border-radius: 4px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>cursor: pointer;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>margin-right: 0.5em;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.btn.delete {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background: #d9534f;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.btn.small {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>padding: 0.3em 0.6em;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-size: 0.85em;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.green {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background-color: #d4edda !important;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1">&lt;/style&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p1">&lt;body&gt;</p>
-<p class="p1">&lt;header&gt;Rue Tracker&lt;/header&gt;</p>
-<p class="p1">&lt;nav id="nav"&gt;&lt;/nav&gt;</p>
-<p class="p1">&lt;main id="root"&gt;&lt;/main&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;script type="module"&gt;</p>
-<p class="p1">import React, { useState, useEffect } from "https://esm.sh/react@18";</p>
-<p class="p1">import ReactDOM from "https://esm.sh/react-dom@18";</p>
-<p class="p1">import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";</p>
-<p class="p2"><br></p>
-<p class="p1">// === Supabase Config ===</p>
-<p class="p1">const SUPABASE_URL = "https://dtkquldtmoboerwkgqqv.supabase.co";</p>
-<p class="p1">const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0a3F1bGR0bW9ib2Vyd2tncXF2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ4MzgyOTUsImV4cCI6MjA3MDQxNDI5NX0.qOgFfvgA9xgzExYi52ZtXPOX6mLUgRPTNHiIgP0psH0";</p>
-<p class="p1">const FAMILY_ID = "RUE_FAM";</p>
-<p class="p2"><br></p>
-<p class="p1">const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);</p>
-<p class="p2"><br></p>
-<p class="p1">// === Utility ===</p>
-<p class="p1">const uid = (prefix = "id") =&gt; `${prefix}_${Math.random().toString(36).slice(2, 9)}`;</p>
-<p class="p1">const formatTime = date =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>let h = date.getHours();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>let m = date.getMinutes().toString().padStart(2, "0");</p>
-<p class="p1"><span class="Apple-converted-space">  </span>let ampm = h &gt;= 12 ? "PM" : "AM";</p>
-<p class="p1"><span class="Apple-converted-space">  </span>h = h % 12 || 12;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>return `${h}:${m} ${ampm}`;</p>
-<p class="p1">};</p>
-<p class="p1">const now = () =&gt; new Date();</p>
-<p class="p1">// === State Defaults ===</p>
-<p class="p1">const defaultState = () =&gt; ({</p>
-<p class="p1"><span class="Apple-converted-space">  </span>logs: [], // { id, type, at }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>schedule: [], // { id, at, type, done }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>trainingCommands: [</p>
-<p class="p1"><span class="Apple-converted-space">    </span>{ id: uid("cmd"), name: "Sit", totalSeconds: 0, learned: false, sessionHistory: [] },</p>
-<p class="p1"><span class="Apple-converted-space">    </span>{ id: uid("cmd"), name: "Down", totalSeconds: 0, learned: false, sessionHistory: [] },</p>
-<p class="p1"><span class="Apple-converted-space">  </span>],</p>
-<p class="p1">});</p>
-<p class="p2"><br></p>
-<p class="p1">// === Supabase Functions ===</p>
-<p class="p1">async function loadState() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const { data, error } = await supabase</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.from("tracker_state")</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.select("state")</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.eq("family_id", FAMILY_ID)</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.single();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (error) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (error.code === "PGRST116") {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>// no row yet, insert default</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const state = defaultState();</p>
-<p class="p1"><span class="Apple-converted-space">      </span>await supabase.from("tracker_state").insert({ family_id: FAMILY_ID, state });</p>
-<p class="p1"><span class="Apple-converted-space">      </span>return state;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>console.error(error);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return defaultState();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>return data.state;</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">async function saveState(state) {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>await supabase</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.from("tracker_state")</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.upsert({ family_id: FAMILY_ID, state });</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">// === Components ===</p>
-<p class="p1">function App() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const [state, setState] = useState(defaultState());</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const [tab, setTab] = useState("logs");</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const [loading, setLoading] = useState(true);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>useEffect(() =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>loadState().then(s =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>setState(s);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>setLoading(false);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}, []);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>useEffect(() =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (!loading) {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>saveState(state);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}, [state, loading]);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>const addLog = (type, at = now()) =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const log = { id: uid("log"), type, at: at.toISOString() };</p>
-<p class="p1"><span class="Apple-converted-space">    </span>let newLogs = [...state.logs, log];</p>
-<p class="p1"><span class="Apple-converted-space">    </span>newLogs.sort((a, b) =&gt; new Date(a.at) - new Date(b.at));</p>
-<p class="p1"><span class="Apple-converted-space">    </span>let newSchedule = [...state.schedule];</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (type === "💧") {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>// add pee attempt 80 min later if none exists</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if (!newSchedule.some(s =&gt; s.type === "🐕💦" &amp;&amp; new Date(s.at) &gt; now())) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const peeAt = new Date(at.getTime() + 80 * 60000);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>newSchedule.push({ id: uid("sch"), at: peeAt.toISOString(), type: "🐕💦", done: false });</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (type === "🐕💦") {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>// remove future pee attempts</p>
-<p class="p1"><span class="Apple-converted-space">      </span>newSchedule = newSchedule.filter(s =&gt; s.type !== "🐕💦" || new Date(s.at) &lt;= now());</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>setState({ ...state, logs: newLogs, schedule: newSchedule });</p>
-<p class="p1"><span class="Apple-converted-space">  </span>};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>const deleteLog = (id) =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>setState({ ...state, logs: state.logs.filter(l =&gt; l.id !== id) });</p>
-<p class="p1"><span class="Apple-converted-space">  </span>};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>const editLogTime = (id, newTime) =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>setState({</p>
-<p class="p1"><span class="Apple-converted-space">      </span>...state,</p>
-<p class="p1"><span class="Apple-converted-space">      </span>logs: state.logs.map(l =&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>l.id === id ? { ...l, at: newTime.toISOString() } : l</p>
-<p class="p1"><span class="Apple-converted-space">      </span>)</p>
-<p class="p1"><span class="Apple-converted-space">    </span>});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>const markScheduleDone = (id) =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const item = state.schedule.find(s =&gt; s.id === id);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (!item) return;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (item.type === "🐕💦") {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>addLog("🐕💦", new Date(item.at));</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (item.type === "🍽️") {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>addLog("🍽️", new Date(item.at));</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>setState({</p>
-<p class="p1"><span class="Apple-converted-space">      </span>...state,</p>
-<p class="p1"><span class="Apple-converted-space">      </span>schedule: state.schedule.map(s =&gt; s.id === id ? { ...s, done: true } : s)</p>
-<p class="p1"><span class="Apple-converted-space">    </span>});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>};</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (loading) return &lt;div&gt;Loading...&lt;/div&gt;;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>return (</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;nav&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;button onClick={() =&gt; setTab("logs")} className={tab === "logs" ? "active" : ""}&gt;Logs&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;button onClick={() =&gt; setTab("schedule")} className={tab === "schedule" ? "active" : ""}&gt;Schedule&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;button onClick={() =&gt; setTab("training")} className={tab === "training" ? "active" : ""}&gt;Training&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/nav&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{tab === "logs" &amp;&amp; (</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;h2&gt;Logs&lt;/h2&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;button className="btn" onClick={() =&gt; addLog("🐕💦")}&gt;Pee&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;button className="btn" onClick={() =&gt; addLog("💩")}&gt;Poop&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;button className="btn" onClick={() =&gt; addLog("💧")}&gt;Water&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;button className="btn" onClick={() =&gt; addLog("😴")}&gt;Sleep&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>{state.logs.map(l =&gt; (</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div key={l.id} className="log-entry"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>{l.type} — {formatTime(new Date(l.at))}</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;button className="btn small delete" onClick={() =&gt; deleteLog(l.id)}&gt;X&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;button className="btn small" onClick={() =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const newTime = prompt("Enter new time (HH:MM AM/PM):");</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if (!newTime) return;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const [time, ampm] = newTime.split(" ");</p>
-<p class="p1"><span class="Apple-converted-space">                </span>let [hh, mm] = time.split(":").map(Number);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if (ampm.toUpperCase() === "PM" &amp;&amp; hh !== 12) hh += 12;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if (ampm.toUpperCase() === "AM" &amp;&amp; hh === 12) hh = 0;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const d = new Date(l.at);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>d.setHours(hh, mm);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>editLogTime(l.id, d);</p>
-<p class="p1"><span class="Apple-converted-space">              </span>}}&gt;Edit&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>))}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>)}</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{tab === "schedule" &amp;&amp; (</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;h2&gt;Schedule&lt;/h2&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>{state.schedule</p>
-<p class="p1"><span class="Apple-converted-space">            </span>.sort((a, b) =&gt; new Date(a.at) - new Date(b.at))</p>
-<p class="p1"><span class="Apple-converted-space">            </span>.map(s =&gt; (</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;div key={s.id} className="schedule-item"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>{s.type} — {formatTime(new Date(s.at))} {s.done ? "(done)" : ""}</p>
-<p class="p1"><span class="Apple-converted-space">                </span>{!s.done &amp;&amp; (</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;button className="btn small" onClick={() =&gt; markScheduleDone(s.id)}&gt;Done&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>)}</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>))}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>)}</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{tab === "training" &amp;&amp; (</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;TrainingTab state={state} setState={setState} /&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>)}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>);</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">// === Training Tab ===</p>
-<p class="p1">function TrainingTab({ state, setState }) {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const startSession = (cmdId) =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const start = Date.now();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const durPrompt = prompt("Enter minutes practiced:");</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (!durPrompt) return;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const minutes = parseInt(durPrompt);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const successPrompt = prompt("Enter % successful responses:");</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (!successPrompt) return;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const pct = parseFloat(successPrompt) / 100;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>setState({</p>
-<p class="p1"><span class="Apple-converted-space">      </span>...state,</p>
-<p class="p1"><span class="Apple-converted-space">      </span>trainingCommands: state.trainingCommands.map(c =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (c.id === cmdId) {</p>
-<p class="p1"><span class="Apple-converted-space">          </span>const newHistory = [...c.sessionHistory, { minutes, pct }];</p>
-<p class="p1"><span class="Apple-converted-space">          </span>const avgPct = newHistory.slice(-3).reduce((a, b) =&gt; a + b.pct, 0) / newHistory.slice(-3).length;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>return {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>...c,</p>
-<p class="p1"><span class="Apple-converted-space">            </span>totalSeconds: c.totalSeconds + minutes * 60,</p>
-<p class="p1"><span class="Apple-converted-space">            </span>learned: avgPct &gt;= 0.75,</p>
-<p class="p1"><span class="Apple-converted-space">            </span>sessionHistory: newHistory</p>
-<p class="p1"><span class="Apple-converted-space">          </span>};</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>return c;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>})</p>
-<p class="p1"><span class="Apple-converted-space">    </span>});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>return (</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;h2&gt;Training&lt;/h2&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{state.trainingCommands.map(c =&gt; (</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div key={c.id} className={`command-row ${c.learned ? "green" : ""}`}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>{c.name} — {Math.round(c.totalSeconds / 60)} min {c.learned &amp;&amp; "🎉"}</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;button className="btn small" onClick={() =&gt; startSession(c.id)}&gt;Train&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>))}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>);</p>
-<p class="p1">}</p>
-<p class="p1">// === Render App ===</p>
-<p class="p1">ReactDOM.createRoot(document.getElementById("root")).render(&lt;App /&gt;);</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;/script&gt;</p>
-<p class="p1">&lt;/body&gt;</p>
-<p class="p1">&lt;/html&gt;</p>
+  <header>Rue Tracker</header>
+  <nav id="nav"></nav>
+  <main id="root"></main>
+
+  <script type="text/babel">
+    const { useEffect, useState, useMemo } = React;
+
+    // ─── Supabase config (your real values) ────────────────────────────────────
+    const SUPABASE_URL = "https://dtkquldtmoboerwkgqqv.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0a3F1bGR0bW9ib2Vyd2tncXF2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ4MzgyOTUsImV4cCI6MjA3MDQxNDI5NX0.qOgFfvgA9xgzExYi52ZtXPOX6mLUgRPTNHiIgP0psH0";
+    const FAMILY_ID = "RUE_FAM";
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // ─── Helpers ───────────────────────────────────────────────────────────────
+    const uid = (p="id") => `${p}_${Math.random().toString(36).slice(2,9)}_${Date.now()}`;
+    const now = () => new Date();
+    const fmtTime = d => {
+      let h = d.getHours(), m = String(d.getMinutes()).padStart(2,"0"), am = h>=12?"PM":"AM";
+      h = h%12 || 12; return `${h}:${m} ${am}`;
+    };
+
+    // ─── Default state ─────────────────────────────────────────────────────────
+    const defaultState = () => ({
+      logs: [],               // [{id,type,atISO}]
+      schedule: [],           // [{id,atISO,type,done}]
+      trainingCommands: [
+        { id: uid("cmd"), name: "Sit",  totalSeconds: 0, learned: false, sessionHistory: [] },
+        { id: uid("cmd"), name: "Down", totalSeconds: 0, learned: false, sessionHistory: [] },
+      ],
+    });
+
+    // ─── Cloud persistence (single-row state) ──────────────────────────────────
+    async function loadState() {
+      const { data, error } = await sb.from("tracker_state").select("state").eq("family_id", FAMILY_ID).single();
+      if (error) {
+        // PGRST116 = no row found
+        if (error.code === "PGRST116") {
+          const s = defaultState();
+          await sb.from("tracker_state").insert({ family_id: FAMILY_ID, state: s });
+          return s;
+        }
+        console.warn(error);
+        return defaultState();
+      }
+      return data.state || defaultState();
+    }
+    async function saveState(state) {
+      await sb.from("tracker_state").upsert({ family_id: FAMILY_ID, state });
+    }
+
+    // ─── App ───────────────────────────────────────────────────────────────────
+    function App() {
+      const [state, setState] = useState(defaultState());
+      const [tab, setTab] = useState("logs");
+      const [loading, setLoading] = useState(true);
+
+      useEffect(() => { (async () => { const s = await loadState(); setState(s); setLoading(false); })(); }, []);
+      useEffect(() => { if (!loading) saveState(state); }, [state, loading]);
+
+      function addLog(type, at = now()) {
+        const log = { id: uid("log"), type, at: at.toISOString() };
+        const logs = [...state.logs, log].sort((a,b)=> new Date(a.at) - new Date(b.at));
+        let schedule = [...state.schedule];
+
+        if (type === "💧") {
+          // schedule a pee attempt 80 min later if none is already pending in the future
+          const pending = schedule.some(s => s.type === "🐕💦" && new Date(s.at) > now());
+          if (!pending) schedule.push({ id: uid("sch"), at: new Date(at.getTime() + 80*60000).toISOString(), type: "🐕💦", done: false });
+        }
+        if (type === "🐕💦") {
+          // clear future attempts after an actual attempt is logged
+          schedule = schedule.filter(s => !(s.type === "🐕💦" && new Date(s.at) > now()));
+        }
+        setState({ ...state, logs, schedule });
+      }
+
+      function deleteLog(id) {
+        setState({ ...state, logs: state.logs.filter(l => l.id !== id) });
+      }
+
+      function editLogTime(id, dateObj) {
+        setState({
+          ...state,
+          logs: state.logs.map(l => l.id === id ? { ...l, at: dateObj.toISOString() } : l)
+        });
+      }
+
+      function markScheduleDone(id) {
+        const item = state.schedule.find(s => s.id === id);
+        if (!item) return;
+        if (item.type === "🐕💦") addLog("🐕💦", new Date(item.at));
+        if (item.type === "🍽️") addLog("🍽️", new Date(item.at));
+        setState({
+          ...state,
+          schedule: state.schedule.map(s => s.id === id ? { ...s, done: true } : s)
+        });
+      }
+
+      if (loading) return <div style={{padding:"16px"}}>Loading…</div>;
+
+      return (
+        <div>
+          <nav>
+            <button onClick={()=>setTab("logs")} className={tab==="logs"?"active":""}>Logs</button>
+            <button onClick={()=>setTab("schedule")} className={tab==="schedule"?"active":""}>Schedule</button>
+            <button onClick={()=>setTab("training")} className={tab==="training"?"active":""}>Training</button>
+          </nav>
+
+          {tab==="logs" && (
+            <section>
+              <h2>Logs</h2>
+              <div className="row" style={{marginBottom:8}}>
+                <button className="btn" onClick={()=>addLog("🐕💦")}>Pee</button>
+                <button className="btn" onClick={()=>addLog("💩")}>Poop</button>
+                <button className="btn" onClick={()=>addLog("💧")}>Water</button>
+                <button className="btn" onClick={()=>addLog("😴")}>Sleep</button>
+              </div>
+
+              {state.logs.map(l => (
+                <div key={l.id} className="log-entry">
+                  <div>{l.type} — {fmtTime(new Date(l.at))}</div>
+                  <div className="row">
+                    <button className="btn small" onClick={()=>{
+                      const input = prompt("Enter new time (HH:MM AM/PM):");
+                      if (!input) return;
+                      const [t, ap] = input.trim().split(" ");
+                      let [hh, mm] = t.split(":").map(Number);
+                      if (ap?.toUpperCase()==="PM" && hh!==12) hh+=12;
+                      if (ap?.toUpperCase()==="AM" && hh===12) hh=0;
+                      const d = new Date(l.at);
+                      d.setHours(hh||0, mm||0, 0, 0);
+                      editLogTime(l.id, d);
+                    }}>Edit</button>
+                    <button className="btn small delete" onClick={()=>deleteLog(l.id)}>Delete</button>
+                  </div>
+                </div>
+              ))}
+              {!state.logs.length && <div>No logs yet.</div>}
+            </section>
+          )}
+
+          {tab==="schedule" && (
+            <section>
+              <h2>Schedule</h2>
+              {state.schedule
+                .slice()
+                .sort((a,b)=> new Date(a.at) - new Date(b.at))
+                .map(s=>(
+                  <div key={s.id} className="schedule-item">
+                    <div>{s.type} — {fmtTime(new Date(s.at))} {s.done ? "(done)":""}</div>
+                    {!s.done && <button className="btn small" onClick={()=>markScheduleDone(s.id)}>Done</button>}
+                  </div>
+                ))}
+              {!state.schedule.length && <div>Nothing scheduled yet.</div>}
+            </section>
+          )}
+
+          {tab==="training" && <TrainingTab state={state} setState={setState} />}
+        </div>
+      );
+    }
+
+    function TrainingTab({ state, setState }) {
+      function startSession(cmdId) {
+        const minsStr = prompt("Minutes practiced:");
+        if (!minsStr) return;
+        const minutes = Math.max(0, parseInt(minsStr,10) || 0);
+
+        const successStr = prompt("Enter % successful responses:");
+        if (!successStr) return;
+        const pct = Math.min(1, Math.max(0, parseFloat(successStr)/100 || 0));
+
+        setState({
+          ...state,
+          trainingCommands: state.trainingCommands.map(c=>{
+            if (c.id !== cmdId) return c;
+            const newHistory = [...c.sessionHistory, { minutes, pct }];
+            const window = newHistory.slice(-3);
+            const avg = window.reduce((a,b)=>a+(b.pct||0),0)/window.length;
+            return {
+              ...c,
+              totalSeconds: c.totalSeconds + minutes*60,
+              learned: avg >= 0.75,
+              sessionHistory: newHistory
+            };
+          })
+        });
+      }
+
+      return (
+        <section>
+          <h2>Training</h2>
+          {state.trainingCommands.map(c=>(
+            <div key={c.id} className={`command-row ${c.learned ? "green":""}`}>
+              <div>{c.name} — {Math.round(c.totalSeconds/60)} min {c.learned && "🎉"}</div>
+              <button className="btn small" onClick={()=>startSession(c.id)}>Train</button>
+            </div>
+          ))}
+        </section>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
 </body>
 </html>
